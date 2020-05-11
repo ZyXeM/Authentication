@@ -10,7 +10,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 @EnableJpaRepositories(basePackages = {"com.SpringAuthenticationServer.authenticationServer.DataLayer"})
 @SpringBootApplication
-@ComponentScan(basePackages = {"com.SpringAuthenticationServer.authenticationServer.Controllers"})
 @EntityScan(basePackages = "com.SpringAuthenticationServer.authenticationServer.Models")
 public class AuthenticationServerApplication {
 
