@@ -1,0 +1,16 @@
+spring:
+  security:
+    user:
+      name: "admin"
+      password: "admin"
+  jpa:
+    hibernate:
+      dll-auto: update
+  datasource:
+    url: jdbc:mysql://localhost:3306/smilei?serverTimezone=UTC
+    username: Mitch
+    password: Bazilraw7
+server:
+  port: 8081
+
+
