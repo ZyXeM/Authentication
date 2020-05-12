@@ -9,6 +9,10 @@ public class ApplicationUser {
     private long id;
     private String username;
     private String password;
+    @ManyToOne
+    private ApplicationUser mainUser;
+
+    private String token;
 
     public long getId() {
         return id;
@@ -28,5 +32,21 @@ public class ApplicationUser {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public ApplicationUser getMainUser() {
+        return mainUser;
+    }
+
+    public void setMainUser(ApplicationUser mainUser) {
+        this.mainUser = mainUser;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 }
