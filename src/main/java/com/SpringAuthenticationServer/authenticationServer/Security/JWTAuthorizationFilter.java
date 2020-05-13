@@ -1,10 +1,22 @@
 package com.SpringAuthenticationServer.authenticationServer.Security;
 
+import com.SpringAuthenticationServer.authenticationServer.DataLayer.ApplicationUserRepository;
+import com.SpringAuthenticationServer.authenticationServer.Models.ApplicationUser;
+import com.SpringAuthenticationServer.authenticationServer.Models.Role;
+import com.SpringAuthenticationServer.authenticationServer.Models.Subject;
+import com.SpringAuthenticationServer.authenticationServer.Service.UserDetailsServiceImpl;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.google.gson.Gson;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 import javax.servlet.FilterChain;
@@ -13,6 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import static com.SpringAuthenticationServer.authenticationServer.Security.SecurityConstants.*;
 
@@ -22,12 +35,12 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
         super(authManager);
     }
 
+
     @Override
     protected void doFilterInternal(HttpServletRequest req,
                                     HttpServletResponse res,
                                     FilterChain chain) throws IOException, ServletException {
         String header = req.getHeader(HEADER_STRING);
-        //System.out.println("StartAutorization");
 
         if (header == null || !header.startsWith(TOKEN_PREFIX)) {
             chain.doFilter(req, res);
@@ -35,6 +48,7 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
         }
 
         UsernamePasswordAuthenticationToken authentication = getAuthentication(req);
+
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         chain.doFilter(req, res);
@@ -44,13 +58,16 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
         String token = request.getHeader(HEADER_STRING);
         if (token != null) {
             // parse the token.
-            String user = JWT.require(Algorithm.HMAC512(SECRET.getBytes()))
+            String subject = JWT.require(Algorithm.HMAC512(SECRET.getBytes()))
                     .build()
                     .verify(token.replace(TOKEN_PREFIX, ""))
                     .getSubject();
+            Gson gson = new Gson();
+            Subject sub = gson.fromJson(subject,Subject.class);
 
-            if (user != null) {
-                return new UsernamePasswordAuthenticationToken(user, null, new ArrayList<>());
+            if (sub != null) {
+                HashSet<GrantedAuthority> auth = new HashSet<>();
+                return new UsernamePasswordAuthenticationToken(sub.getUsername(), null, sub.convertToAuthorities());
             }
             return null;
         }

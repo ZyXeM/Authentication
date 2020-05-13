@@ -7,10 +7,13 @@ import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfi
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 @EnableJpaRepositories(basePackages = {"com.SpringAuthenticationServer.authenticationServer.DataLayer"})
 @SpringBootApplication
 @EntityScan(basePackages = "com.SpringAuthenticationServer.authenticationServer.Models")
+@EnableGlobalMethodSecurity(prePostEnabled = true)
+
 public class AuthenticationServerApplication {
 
 	public static void main(String[] args) {
